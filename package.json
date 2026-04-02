@@ -1,6 +1,29 @@
 {
   "name": "portfolio-maker",
-  "version": "0.1.0",
+  "version": "1.1.0",
+  "description": "A full-featured React application to create professional portfolios with live preview, multiple templates, and export options",
+  "author": "Portfolio Maker Contributors",
+  "license": "MIT",
+  "homepage": "https://github.com/johnny-ops/portfolio-maker",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/johnny-ops/portfolio-maker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/johnny-ops/portfolio-maker/issues"
+  },
+  "keywords": [
+    "portfolio",
+    "resume",
+    "cv",
+    "portfolio-builder",
+    "react",
+    "tailwindcss",
+    "firebase",
+    "portfolio-generator",
+    "portfolio-maker",
+    "web-app"
+  ],
   "private": true,
   "dependencies": {
     "react": "^18.2.0",
@@ -17,7 +40,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
