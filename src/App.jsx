@@ -13,7 +13,6 @@ function App() {
   const [currentTemplate, setCurrentTemplate] = useState('template1');
   const [activeTab, setActiveTab] = useState('personal');
   
-  // Initialize portfolio data from localStorage or defaults
   const [portfolioData, setPortfolioData] = useState(() => {
     const saved = localStorage.getItem('portfolioData');
     return saved ? JSON.parse(saved) : {
