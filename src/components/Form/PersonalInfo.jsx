@@ -1,11 +1,25 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Upload, X } from 'lucide-react';
+import { validateEmail, validateURL, getFieldError } from '../Validation/FormValidator';
 
 const PersonalInfo = ({ data, onChange }) => {
   const fileInputRef = useRef(null);
+  const [errors, setErrors] = useState({});
 
   const handleChange = (field, value) => {
     onChange({ ...data, [field]: value });
+    
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors({ ...errors, [field]: null });
+    }
+  };
+
+  const handleBlur = (field, value, type) => {
+    const error = getFieldError(field, value, type);
+    if (error) {
+      setErrors({ ...errors, [field]: error });
+    }
   };
 
   const handleSocialChange = (platform, value) => {
@@ -78,9 +92,15 @@ const PersonalInfo = ({ data, onChange }) => {
           type="text"
           value={data.fullName}
           onChange={(e) => handleChange('fullName', e.target.value)}
+          onBlur={(e) => handleBlur('fullName', e.target.value, 'required')}
           placeholder="John Doe"
-          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+            errors.fullName ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+          }`}
         />
+        {errors.fullName && (
+          <p className="text-xs text-red-500 mt-1">{errors.fullName}</p>
+        )}
       </div>
 
       {/* Title/Role */}
@@ -92,9 +112,15 @@ const PersonalInfo = ({ data, onChange }) => {
           type="text"
           value={data.title}
           onChange={(e) => handleChange('title', e.target.value)}
+          onBlur={(e) => handleBlur('title', e.target.value, 'required')}
           placeholder="Full Stack Developer"
-          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+            errors.title ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+          }`}
         />
+        {errors.title && (
+          <p className="text-xs text-red-500 mt-1">{errors.title}</p>
+        )}
       </div>
 
       {/* Bio */}
@@ -134,9 +160,15 @@ const PersonalInfo = ({ data, onChange }) => {
           type="email"
           value={data.email}
           onChange={(e) => handleChange('email', e.target.value)}
+          onBlur={(e) => handleBlur('email', e.target.value, 'email')}
           placeholder="john@example.com"
-          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+            errors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+          }`}
         />
+        {errors.email && (
+          <p className="text-xs text-red-500 mt-1">{errors.email}</p>
+        )}
       </div>
 
       {/* Phone */}

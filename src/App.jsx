@@ -1,17 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { Download, Save, Upload, Moon, Sun } from 'lucide-react';
+import { Download, Save, Upload, Moon, Sun, Undo2, Redo2, User, Eye, EyeOff, ZoomIn, ZoomOut, Maximize2, Cloud } from 'lucide-react';
+import { AuthProvider } from './contexts/AuthContext';
+import { PortfolioProvider, usePortfolio } from './contexts/PortfolioContext';
+import { useAuth } from './contexts/AuthContext';
 import PersonalInfo from './components/Form/PersonalInfo';
 import SkillsForm from './components/Form/SkillsForm';
 import ProjectsForm from './components/Form/ProjectsForm';
 import ExperienceForm from './components/Form/ExperienceForm';
 import EducationForm from './components/Form/EducationForm';
 import PortfolioPreview from './components/Preview/PortfolioPreview';
-import { exportToPDF, exportToHTML } from './utils/exportUtils';
+import AuthModal from './components/Auth/AuthModal';
+import ThemeColorPicker from './components/ColorPicker/ThemeColorPicker';
+import SectionSettings from './components/Settings/SectionSettings';
+import FormValidator from './components/Validation/FormValidator';
+import { exportToPDF, exportToHTML, exportAsReactComponent } from './utils/exportUtils';
 
-function App() {
+function AppContent() {
+  const { currentUser, logout } = useAuth();
+  const { portfolioData, setPortfolioData, undo, redo, canUndo, canRedo, saveToFirebase, loading } = usePortfolio();
+  
   const [darkMode, setDarkMode] = useState(false);
-  const [currentTemplate, setCurrentTemplate] = useState('template1');
+  const [currentTemplate, setCurrentTemplate] = useState(portfolioData.settings?.template || 'template1');
   const [activeTab, setActiveTab] = useState('personal');
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [previewZoom, setPreviewZoom] = useState(100);
+  const [previewMode, setPreviewMode] = useState('desktop'); // desktop, tablet, mobile
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showValidation, setShowValidation] = useState(false);
   
   const [portfolioData, setPortfolioData] = useState(() => {
     const saved = localStorage.getItem('portfolioData');
@@ -45,16 +60,39 @@ function App() {
 
   // Update specific section of portfolio data
   const updateSection = (section, data) => {
-    setPortfolioData(prev => ({
-      ...prev,
+    setPortfolioData({
+      ...portfolioData,
       [section]: data
-    }));
+    });
   };
 
-  // Save data to localStorage
-  const handleSave = () => {
-    localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
-    alert('Portfolio saved successfully!');
+  // Update settings
+  const updateSettings = (newSettings) => {
+    setPortfolioData({
+      ...portfolioData,
+      settings: { ...portfolioData.settings, ...newSettings }
+    });
+  };
+
+  // Handle template change
+  const handleTemplateChange = (template) => {
+    setCurrentTemplate(template);
+    updateSettings({ template });
+  };
+
+  // Handle theme color change
+  const handleColorChange = (color) => {
+    updateSettings({ themeColor: color });
+  };
+
+  // Save data
+  const handleSave = async () => {
+    if (currentUser) {
+      await saveToFirebase();
+    } else {
+      localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
+      alert('Portfolio saved locally!');
+    }
   };
 
   // Load data from file

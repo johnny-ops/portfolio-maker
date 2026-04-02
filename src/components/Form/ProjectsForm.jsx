@@ -1,5 +1,7 @@
 import React, { useRef } from 'react';
 import { Plus, Trash2, Upload, X } from 'lucide-react';
+import DraggableList from '../DragDrop/DraggableList';
+import { validateURL } from '../Validation/FormValidator';
 
 const ProjectsForm = ({ data, onChange }) => {
   const fileInputRefs = useRef({});
@@ -8,6 +10,7 @@ const ProjectsForm = ({ data, onChange }) => {
     onChange([
       ...data,
       {
+        id: Date.now(),
         title: '',
         description: '',
         technologies: '',
